@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 const navigation = {
@@ -22,18 +23,24 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-                 <div className="h-8 w-8 text-white">
-                     {/* Logo Placeholder */}
-                     <svg viewBox="0 0 24 24" fill="currentColor" className="h-full w-full">
-                        <path d="M12 2C7.5 2 4 6.5 4 12c0 5 3.5 9 8 9s8-4 8-9c0-5.5-3.5-9-8-9zm0 16c-3.5 0-6-3-6-7s2.5-7 6-7 6 3 6 7-2.5 7-6 7z" />
-                     </svg>
+            <div className="flex items-center gap-3">
+                 <div className="relative h-14 w-14 overflow-hidden rounded-xl shadow-sm bg-white/5">
+                    <Image 
+                        src="/logo.png" 
+                        alt="Daarul-Hijrah Logo" 
+                        fill 
+                        className="object-cover"
+                    />
                  </div>
-                 <span className="font-serif text-2xl font-bold">Daarul-Hijrah</span>
+                 <span className="font-serif text-2xl font-bold text-accent">Daarul-Hijrah</span>
             </div>
             <p className="text-sm leading-6 text-gray-300 max-w-xs">
               Your trusted source for accessible and authentic Islamic knowledge.
             </p>
+            <div className="pt-4 text-sm leading-6 text-gray-300">
+               <p>5 Rufus Banjo St, Idimu, Lagos 102213</p>
+               <p className="mt-1 text-gray-400">Blazers School, Beside Gidado Mosque</p>
+            </div>
           </div>
           <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
@@ -71,7 +78,7 @@ export function Footer() {
                     <label htmlFor="email-address" className="sr-only">
                         Email address
                     </label>
-                    <div className="relative flex-grow">
+                    <div className="relative grow">
                         <input
                             type="email"
                             name="email-address"
@@ -96,7 +103,7 @@ export function Footer() {
         </div>
         <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
           <p className="text-xs leading-5 text-gray-400">
-            &copy; 2024 Daarul-Hijrah. All rights reserved.
+            &copy; 2025 Daarul-Hijrah. All rights reserved.
           </p>
         </div>
       </div>
