@@ -1,8 +1,55 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Check, Eye, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      // Redirect to home or dashboard on success (Student Dashboard typically)
+      // Since we don't have a dashboard yet, redirect to home
+      router.push("/");
+      router.refresh(); 
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col lg:flex-row">
       {/* Left Panel - Brand & Inspiration */}
@@ -86,15 +133,37 @@ export default function SignupPage() {
                </span>
             </div>
             
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+               {error && (
+                  <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+                    {error}
+                  </div>
+               )}
+
                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
                      <label htmlFor="firstName" className="mb-2 block text-sm font-semibold text-foreground">First Name</label>
-                     <input type="text" id="firstName" placeholder="Yusuf" className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" />
+                     <input 
+                        type="text" 
+                        id="firstName" 
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        placeholder="Yusuf" 
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
+                        required
+                     />
                   </div>
                   <div>
                      <label htmlFor="lastName" className="mb-2 block text-sm font-semibold text-foreground">Last Name</label>
-                     <input type="text" id="lastName" placeholder="Ali" className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" />
+                     <input 
+                        type="text" 
+                        id="lastName" 
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        placeholder="Ali" 
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
+                        required
+                     />
                   </div>
                </div>
                
@@ -104,7 +173,15 @@ export default function SignupPage() {
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     </span>
-                    <input type="email" id="email" placeholder="name@example.com" className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" />
+                    <input 
+                        type="email" 
+                        id="email" 
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="name@example.com" 
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
+                        required
+                    />
                   </div>
                </div>
                
@@ -129,7 +206,15 @@ export default function SignupPage() {
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </span>
-                    <input type="password" id="password" placeholder="Min. 8 characters" className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-11 pr-11 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" />
+                    <input 
+                        type="password" 
+                        id="password" 
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="Min. 8 characters" 
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-11 pr-11 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
+                        required
+                    />
                     <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                        <Eye className="h-4 w-4" />
                     </button>
@@ -152,9 +237,15 @@ export default function SignupPage() {
                   </label>
                </div>
                
-               <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 font-semibold text-white transition-transform hover:scale-[1.01] hover:bg-primary/90 active:scale-[0.99]">
-                  Create Account 
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+               <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 font-semibold text-white transition-transform hover:scale-[1.01] hover:bg-primary/90 active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
+               >
+                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {!loading && (
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  )}
                </button>
             </form>
             

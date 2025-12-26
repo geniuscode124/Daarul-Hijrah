@@ -1,0 +1,63 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { hashPassword } from '@/lib/auth/password';
+import { SignupSchema } from '@/lib/auth/validations';
+import { createSession } from '@/lib/auth/session';
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    
+    // Validate input
+    const result = SignupSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json(
+        { message: 'Invalid input', errors: result.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
+    const { firstName, lastName, email, password } = result.data;
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { message: 'User with this email already exists' },
+        { status: 409 }
+      );
+    }
+
+    // Hash password
+    const passwordHash = await hashPassword(password);
+
+    // Create user (Role always defaults to "student")
+    const newUser = await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        passwordHash,
+        role: 'student', 
+      },
+    });
+
+    // Create session (login immediately after signup)
+    await createSession(newUser.id, newUser.role);
+
+    return NextResponse.json(
+      { message: 'Account created successfully', user: { id: newUser.id, email: newUser.email, role: newUser.role } },
+      { status: 201 }
+    );
+
+  } catch (error) {
+    console.error('Signup error:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

@@ -1,8 +1,53 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Invalid credentials");
+      }
+
+      // Redirect based on role (data.user.role) or to home
+      // We'll redirect to home for now as simple success
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#F4F9F6] p-4 text-foreground relative overflow-hidden">
       {/* Background Pattern - subtle geometric shapes similar to screenshot */}
@@ -32,16 +77,25 @@ export default function LoginPage() {
 
          {/* Login Card */}
          <div className="rounded-2xl bg-white p-8 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] sm:p-10">
-            <form className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
                
+               {error && (
+                  <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+                    {error}
+                  </div>
+               )}
+
                {/* Email Input */}
                <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-bold text-gray-800">Email or Phone Number</label>
                   <input 
                     type="text" 
                     id="email" 
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="Enter your email or phone" 
                     className="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-all" 
+                    required
                   />
                </div>
 
@@ -55,8 +109,11 @@ export default function LoginPage() {
                     <input 
                         type="password" 
                         id="password" 
+                        value={formData.password}
+                        onChange={handleChange}
                         placeholder="Enter your password" 
                         className="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-all pr-10" 
+                        required
                     />
                     <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                        <Eye className="h-5 w-5" />
@@ -65,8 +122,12 @@ export default function LoginPage() {
                </div>
 
                {/* Login Button */}
-               <button type="submit" className="w-full rounded-lg bg-[#0F3D2E] py-3.5 text-center text-sm font-bold text-white transition-transform hover:bg-[#0c3125] active:scale-[0.99] shadow-sm">
-                  Log In
+               <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full rounded-lg bg-[#0F3D2E] py-3.5 text-center text-sm font-bold text-white transition-transform hover:bg-[#0c3125] active:scale-[0.99] shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+               >
+                  {loading ? 'Logging in...' : 'Log In'}
                </button>
 
             </form>
