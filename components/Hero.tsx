@@ -18,10 +18,10 @@ export function Hero() {
           </p>
           <div className="mt-10 flex items-center justify-center lg:justify-start gap-x-6">
             <Link
-              href="#"
+              href="/signup"
               className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors"
             >
-              Get Started <ArrowRight className="h-4 w-4" />
+              Start Learning <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="#"
