@@ -1,52 +1,56 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Menu } from "lucide-react";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-black/5 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          {/* Use a simple icon or text for now, assuming logo is an image or SVg */}
-          <div className="h-8 w-8 text-primary">
-             {/* Logo Placeholder - leaf icon or similar */}
-             <svg viewBox="0 0 24 24" fill="currentColor" className="h-full w-full">
-                <path d="M12 2C7.5 2 4 6.5 4 12c0 5 3.5 9 8 9s8-4 8-9c0-5.5-3.5-9-8-9zm0 16c-3.5 0-6-3-6-7s2.5-7 6-7 6 3 6 7-2.5 7-6 7z" />
-             </svg>
-          </div>
-          <span className="font-serif text-xl font-bold tracking-tight text-primary">
-            Daarul-Hijrah
-          </span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Courses
+        <div className="flex lg:flex-1">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative h-14 w-14 overflow-hidden rounded-xl shadow-sm transition-transform group-hover:scale-105">
+               <Image 
+                 src="/logo.png" 
+                 alt="Daarul-Hijrah Logo" 
+                 fill 
+                 className="object-cover"
+               />
+            </div>
+            <span className="font-serif text-xl font-bold tracking-tight text-primary group-hover:text-primary/80 transition-colors">
+              Daarul-Hijrah
+            </span>
           </Link>
-          <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+        </div>
+
+        {/* Desktop Navigation - Centered */}
+        <nav className="hidden lg:flex items-center justify-center gap-10">
+          <Link href="#" className="text-base font-medium text-foreground hover:text-primary transition-colors font-serif border-b-2 border-accent/0 hover:border-accent">
+            Home
+          </Link>
+          <Link href="#" className="text-base font-medium text-muted-foreground hover:text-primary transition-colors font-serif border-b-2 border-accent/0 hover:border-accent">
             About
           </Link>
-          <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Contact
+          <Link href="#" className="text-base font-medium text-muted-foreground hover:text-primary transition-colors font-serif border-b-2 border-accent/0 hover:border-accent">
+            Courses
+          </Link>
+          <Link href="#" className="text-base font-medium text-muted-foreground hover:text-primary transition-colors font-serif border-b-2 border-accent/0 hover:border-accent">
+            Events
+          </Link>
+          <Link href="#" className="text-base font-medium text-muted-foreground hover:text-primary transition-colors font-serif border-b-2 border-accent/0 hover:border-accent">
+            Newsletter
           </Link>
         </nav>
 
-        {/* Auth Buttons */}
-        <div className="hidden md:flex items-center gap-4">
-          <Link href="#" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-            Log In
-          </Link>
-          <Link
-            href="#"
-            className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-accent/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent transition-colors"
-          >
-            Sign Up
+        {/* Right Section - Contact Us */}
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <Link href="#" className="text-base font-medium text-foreground hover:text-primary transition-colors font-serif border-b-2 border-accent/0 hover:border-accent">
+            Contact Us
           </Link>
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="lg:hidden flex flex-1 justify-end">
             <button className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
               <span className="sr-only">Open main menu</span>
               <Menu className="h-6 w-6" aria-hidden="true" />
