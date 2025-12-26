@@ -41,7 +41,7 @@ export function Testimonials() {
               className="flex flex-col justify-between bg-gray-50 p-8 rounded-2xl ring-1 ring-gray-200"
             >
               <blockquote className="text-lg italic leading-8 text-gray-900 border-l-4 border-accent pl-4 mb-6">
-                "{testimonial.body}"
+                &quot;{testimonial.body}&quot;
               </blockquote>
               <div className="flex items-center gap-x-4">
                 <div className="text-sm leading-6">

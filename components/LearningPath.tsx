@@ -38,7 +38,7 @@ export function LearningPath() {
             Find Your <span className="text-accent">Learning Path</span>
           </h2>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">
-            Whether you're starting your journey or deepening your knowledge, we have a path for you.
+            Whether you&apos;re starting your journey or deepening your knowledge, we have a path for you.
           </p>
         </div>
         
