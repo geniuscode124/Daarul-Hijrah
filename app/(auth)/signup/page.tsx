@@ -185,21 +185,6 @@ export default function SignupPage() {
                   </div>
                </div>
                
-                <div>
-                  <label htmlFor="grade" className="mb-2 block text-sm font-semibold text-foreground">Grade Level / Course Interest</label>
-                  <div className="relative">
-                    <select id="grade" className="w-full appearance-none rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary">
-                       <option value="">Select a level</option>
-                       <option value="beginner">Beginner</option>
-                       <option value="intermediate">Intermediate</option>
-                       <option value="advanced">Advanced</option>
-                    </select>
-                    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-                       <ChevronDown className="h-4 w-4" />
-                    </span>
-                  </div>
-               </div>
-               
                <div>
                   <label htmlFor="password" className="mb-2 block text-sm font-semibold text-foreground">Password</label>
                   <div className="relative">
