@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth/password';
 import { SignupSchema } from '@/lib/auth/validations';
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     const result = SignupSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { message: 'Invalid input', errors: result.error.flatten().fieldErrors },
+        { message: 'Invalid input', errors: z.flattenError(result.error).fieldErrors },
         { status: 400 }
       );
     }
