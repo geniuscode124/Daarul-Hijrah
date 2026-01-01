@@ -7,7 +7,18 @@ import { createSession } from '@/lib/auth/session';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    // Check if body is present
+    const contentType = req.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      return NextResponse.json({ message: 'Content-Type must be application/json' }, { status: 415 });
+    }
+
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      return NextResponse.json({ message: 'Invalid or empty JSON body' }, { status: 400 });
+    }
     
     // Validate input
     const result = SignupSchema.safeParse(body);
