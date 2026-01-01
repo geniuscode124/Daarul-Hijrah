@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
     ],
   },
   allowedDevOrigins: ["localhost:3000", "192.168.0.162:3000"],
+  serverExternalPackages: [
+    '@prisma/client',
+    '.prisma',
+  ],
 };
 
 export default nextConfig;

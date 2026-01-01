@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { PrismaClient } from '../app/generated/prisma';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 
