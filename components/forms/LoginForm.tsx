@@ -51,10 +51,15 @@ export function LoginForm() {
         body: JSON.stringify(values),
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
-        throw new Error(data.message || "Invalid credentials");
+        let errorMessage = "Invalid credentials";
+        try {
+          const data = await res.json();
+          errorMessage = data.message || errorMessage;
+          throw new Error(errorMessage);
+        } catch {
+          throw new Error(errorMessage);
+        }
       }
 
       router.push("/");
@@ -116,6 +121,7 @@ export function LoginForm() {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4 text-muted-foreground" />

@@ -50,8 +50,7 @@ export function SignupForm() {
       lastName: "",
       email: "",
       password: "",
-      // @ts-ignore
-      terms: false,
+      terms: false as unknown as true,
     },
   });
 
