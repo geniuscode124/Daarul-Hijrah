@@ -248,7 +248,7 @@ export function SignupForm() {
                         })}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Must contain at least 8 characters, one symbol, and one number.
+                        Must contain at least 8 characters, one symbol, one number, and one capital letter.
                       </p>
                     </div>
                   )}

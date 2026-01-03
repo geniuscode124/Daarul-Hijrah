@@ -66,41 +66,7 @@ export default function SignupPage() {
       {/* Right Panel - Form */}
       <div className="flex w-full flex-col justify-center bg-white p-8 lg:w-[55%] lg:p-12 xl:p-24">
          <div className="mx-auto w-full max-w-lg">
-            <div className="mb-10 flex items-center justify-end text-sm">
-               <span className="text-muted-foreground mr-2">Already have an account?</span>
-               <Link href="/login" className="font-semibold text-[#114232] hover:underline">Sign in</Link>
-            </div>
-            
-            <div className="mb-10">
-               <h1 className="mb-2 font-serif text-4xl font-bold text-foreground">Create your account</h1>
-               <p className="text-muted-foreground">Start your journey with us today.</p>
-            </div>
-            
-            {/* Role Tab (Static) */}
-            <div className="mb-8">
-               <span className="inline-flex items-center gap-2 rounded-full bg-[#114232]/10 px-3 py-1 text-sm font-medium text-[#114232] ring-1 ring-inset ring-[#114232]/20">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#114232]"></span>
-                  Student Account
-               </span>
-            </div>
-            
             <SignupForm />
-            
-            <div className="my-8 flex items-center gap-4">
-               <div className="h-px flex-1 bg-gray-200"></div>
-               <span className="text-xs font-semibold text-muted-foreground">OR CONTINUE WITH</span>
-               <div className="h-px flex-1 bg-gray-200"></div>
-            </div>
-            
-            <button type="button" className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white py-3 font-medium text-foreground transition-colors hover:bg-gray-50">
-               <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-                  <path d="M12.0003 20.45c4.6667 0 8.45-3.7833 8.45-8.45 0-.7-.0667-1.3833-.1833-2.0333H12.0003v3.85h4.8333c-.2083 1.125-.85 2.075-1.8083 2.7167l2.925 2.2667c1.7167-1.5833 2.7083-3.9167 2.7083-6.6 0-.575-.05-1.125-.125-1.6667H12.0003v3.1334h3.1s.0333.1.0333.25c0 1.9333-1.5667 3.5-3.5 3.5-1.9333 0-3.5-1.5667-3.5-3.5s1.5667-3.5 3.5-3.5c.8833 0 1.6833.325 2.3083.8584l2.4583-2.4584C14.992 5.05 13.592 4.2 12.0003 4.2 7.7003 4.2 4.2003 7.7 4.2003 12s3.5 7.8 7.8 7.8" fill="#FC3F1D" fillRule="evenodd" clipRule="evenodd" />
-                  <path d="M5.525 6.59169 7.98333 8.39997C8.61667 6.84169 10.1667 5.74169 12 5.74169c1.075 0 2.05.38333 2.8083 1.01667l2.1-2.09167C15.6583 3.53333 13.9167 2.95 12 2.95c-3.13333 0-5.83333 1.76667-7.15833 4.175" fill="#F33A21" fillRule="evenodd" clipRule="evenodd" />
-                  <path d="M4.2 12c0-.65.10833-1.2667.3-1.8417l-2.31666-1.7833C1.63334 9.53333 1.3 10.7333 1.3 12c0 1.25.325 2.4417.88334 3.6167l2.33333-1.7834C4.31667 13.2667 4.2 12.65 4.2 12" fill="#FABB04" fillRule="evenodd" clipRule="evenodd" />
-                  <path d="M12 21.05c1.8667 0 3.5917-.6167 4.95-1.6667l-2.2917-2.2833c-.7.5167-1.6333.85-2.6583.85-1.9833 0-3.66667-1.35-4.26667-3.2167l-2.35 1.8334c1.35 2.65 4.09167 4.4833 7.21667 4.4833" fill="#149C59" fillRule="evenodd" clipRule="evenodd" />
-               </svg>
-               Google
-            </button>
          </div>
       </div>
     </div>
