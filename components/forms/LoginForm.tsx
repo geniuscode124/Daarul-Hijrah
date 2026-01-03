@@ -56,12 +56,11 @@ export function LoginForm() {
         try {
           const data = await res.json();
           errorMessage = data.message || errorMessage;
-          throw new Error(errorMessage);
         } catch {
-          throw new Error(errorMessage);
+          // JSON parsing failed, keep default errorMessage
         }
+        throw new Error(errorMessage);
       }
-
       router.push("/");
       router.refresh();
     } catch (err: any) {

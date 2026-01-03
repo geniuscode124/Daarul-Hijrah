@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Eye, EyeOff, Loader2, User, Mail, Lock, ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 
 const signupSchema = z.object({
@@ -42,6 +45,7 @@ export function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -53,6 +57,15 @@ export function SignupForm() {
       terms: false as unknown as true,
     },
   });
+
+  const calculateStrength = (pass: string) => {
+    let score = 0;
+    if (pass.length >= 8) score++;
+    if (/[A-Z]/.test(pass)) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+    setPasswordStrength(score);
+  };
 
   async function onSubmit(values: SignupFormValues) {
     setLoading(true);
@@ -86,8 +99,30 @@ export function SignupForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <div className="w-full max-w-lg space-y-8">
+      <div className="flex justify-end text-sm">
+        <span className="text-muted-foreground">Already have an account? </span>
+        <Link href="/login" className="ml-1 font-semibold text-primary hover:underline">
+          Sign in
+        </Link>
+      </div>
+
+      <div className="space-y-2">
+        <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+          Create your account
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Start your journey with us today.
+        </p>
+      </div>
+
+      <Badge variant="success" className="px-3 py-1 text-sm font-medium">
+        <span className="mr-2 h-2 w-2 rounded-full bg-emerald-500" />
+        Student Account
+      </Badge>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
         {error && (
           <div className="rounded-md bg-destructive/15 p-4 text-sm text-destructive">
             {error}
@@ -100,9 +135,13 @@ export function SignupForm() {
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel className="text-foreground font-semibold">First Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Yusuf" {...field} />
+                  <Input 
+                    placeholder="Yusuf" 
+                    className="h-11 bg-muted/30" 
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,9 +152,13 @@ export function SignupForm() {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel className="text-foreground font-semibold">Last Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ali" {...field} />
+                  <Input 
+                    placeholder="Ali" 
+                    className="h-11 bg-muted/30" 
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,9 +171,16 @@ export function SignupForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel className="text-foreground font-semibold">Email Address</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input 
+                    placeholder="name@example.com" 
+                    className="h-11 pl-10 bg-muted/30" 
+                    {...field} 
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -142,27 +192,66 @@ export function SignupForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-foreground font-semibold">Password</FormLabel>
               <FormControl>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Min. 8 characters"
-                    {...field}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
+                <div className="space-y-3">
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Min. 8 characters"
+                      className="h-11 pl-10 bg-muted/30 pr-10"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        calculateStrength(e.target.value);
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
+                  
+                  {field.value.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-4 gap-2">
+                        {[1, 2, 3, 4].map((index) => {
+                          const getStrengthColor = (score: number) => {
+                            if (score === 1) return "bg-red-500";
+                            if (score === 2) return "bg-orange-500";
+                            if (score === 3) return "bg-amber-500";
+                            if (score === 4) return "bg-emerald-500";
+                            return "bg-muted";
+                          };
+
+                          return (
+                            <div
+                              key={index}
+                              className={cn(
+                                "h-1.5 rounded-full transition-colors",
+                                index <= passwordStrength 
+                                  ? getStrengthColor(passwordStrength) 
+                                  : "bg-muted"
+                              )}
+                            />
+                          );
+                        })}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Must contain at least 8 characters, one symbol, and one number.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </FormControl>
               <FormMessage />
@@ -204,17 +293,46 @@ export function SignupForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" className="h-12 w-full bg-primary font-semibold hover:bg-primary/90" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Creating Account...
             </>
           ) : (
-            "Create Account"
+            <>
+              Create Account
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
           )}
+        </Button>
+
+        <div className="relative py-4">
+          <div className="absolute inset-0 flex items-center">
+            <Separator />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="h-12 w-full bg-background"
+          onClick={() => {}}
+        >
+          <img
+            src="https://www.google.com/favicon.ico"
+            alt="Google"
+            className="mr-2 h-4 w-4"
+          />
+          Google
         </Button>
       </form>
     </Form>
-  );
+  </div>
+);
 }
