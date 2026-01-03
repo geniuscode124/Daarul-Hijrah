@@ -2,59 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Check, Eye, ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { SignupForm } from "@/components/forms/SignupForm";
 
 export default function SignupPage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
-
-      // Redirect to home or dashboard on success (Student Dashboard typically)
-      // Since we don't have a dashboard yet, redirect to home
-      router.push("/");
-      router.refresh(); 
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="flex min-h-screen w-full flex-col lg:flex-row">
       {/* Left Panel - Brand & Inspiration */}
-      <div className="relative flex w-full flex-col justify-between bg-primary p-8 text-white lg:w-[45%] lg:p-12 xl:p-16">
-         {/* Background pattern or slight texture overlay could go here */}
+      <div className="relative flex w-full flex-col justify-between bg-[#114232] p-8 text-white lg:w-[45%] lg:p-12 xl:p-16">
+        {/* Background pattern could go here */}
         
         {/* Logo */}
         <Link href="/" className="mb-12 flex items-center gap-3 w-fit">
@@ -71,9 +26,8 @@ export default function SignupPage() {
         
         {/* Main Content */}
         <div className="relative z-10 max-w-md">
-           <div className="mb-8 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-md">
-              {/* Icon resembling the book/open Quran from the screenshot */}
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-accent">
+           <div className="mb-8 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-[#C5A059]">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
               </svg>
@@ -90,18 +44,15 @@ export default function SignupPage() {
            {/* Social Proof */}
            <div className="mt-12 flex items-center gap-4">
               <div className="flex -space-x-4">
-                 {/* Abstract/Icon Placeholders for Avatars */}
                  {[1, 2, 3].map((i) => (
-                   <div key={i} className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-accent/20 backdrop-blur-md text-white">
-                      <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 opacity-80">
-                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                      </svg>
+                   <div key={i} className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#114232] bg-[#C5A059]/20 backdrop-blur-md text-white font-bold">
+                      {String.fromCharCode(64 + i)}
                    </div>
                  ))}
               </div>
               <div>
                  <p className="font-bold text-white">2,000+ Students</p>
-                 <p className="text-sm text-accent">Trust Daarul-Hijrah</p>
+                 <p className="text-sm text-[#C5A059]">Trust Daarul-Hijrah</p>
               </div>
            </div>
         </div>
@@ -117,7 +68,7 @@ export default function SignupPage() {
          <div className="mx-auto w-full max-w-lg">
             <div className="mb-10 flex items-center justify-end text-sm">
                <span className="text-muted-foreground mr-2">Already have an account?</span>
-               <Link href="/login" className="font-semibold text-primary hover:underline">Sign in</Link>
+               <Link href="/login" className="font-semibold text-[#114232] hover:underline">Sign in</Link>
             </div>
             
             <div className="mb-10">
@@ -127,112 +78,13 @@ export default function SignupPage() {
             
             {/* Role Tab (Static) */}
             <div className="mb-8">
-               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary ring-1 ring-inset ring-primary/20">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+               <span className="inline-flex items-center gap-2 rounded-full bg-[#114232]/10 px-3 py-1 text-sm font-medium text-[#114232] ring-1 ring-inset ring-[#114232]/20">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#114232]"></span>
                   Student Account
                </span>
             </div>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
-               {error && (
-                  <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-                    {error}
-                  </div>
-               )}
-
-               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div>
-                     <label htmlFor="firstName" className="mb-2 block text-sm font-semibold text-foreground">First Name</label>
-                     <input 
-                        type="text" 
-                        id="firstName" 
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        placeholder="Yusuf" 
-                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
-                        required
-                     />
-                  </div>
-                  <div>
-                     <label htmlFor="lastName" className="mb-2 block text-sm font-semibold text-foreground">Last Name</label>
-                     <input 
-                        type="text" 
-                        id="lastName" 
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        placeholder="Ali" 
-                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
-                        required
-                     />
-                  </div>
-               </div>
-               
-               <div>
-                  <label htmlFor="email" className="mb-2 block text-sm font-semibold text-foreground">Email Address</label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                    </span>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="name@example.com" 
-                        className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
-                        required
-                    />
-                  </div>
-               </div>
-               
-               <div>
-                  <label htmlFor="password" className="mb-2 block text-sm font-semibold text-foreground">Password</label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </span>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="Min. 8 characters" 
-                        className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-11 pr-11 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary" 
-                        required
-                    />
-                    <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                       <Eye className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="mt-2 flex gap-1">
-                      <div className="h-1 flex-1 rounded-full bg-green-500"></div>
-                      <div className="h-1 flex-1 rounded-full bg-gray-200"></div>
-                      <div className="h-1 flex-1 rounded-full bg-gray-200"></div>
-                      <div className="h-1 flex-1 rounded-full bg-gray-200"></div>
-                  </div>
-                  <p className="mt-2 text-xs text-muted-foreground">Must contain at least 8 characters, one symbol, and one number.</p>
-               </div>
-               
-               <div className="flex items-start gap-3">
-                  <div className="flex h-5 items-center">
-                     <input id="terms" type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
-                  </div>
-                  <label htmlFor="terms" className="text-sm text-foreground">
-                     I agree to the <Link href="/terms" className="font-semibold underline hover:bg-black/5 hover:text-black hover:no-underline">Terms</Link> and <Link href="/privacy" className="font-semibold underline hover:bg-black/5 hover:text-black hover:no-underline">Privacy Policy</Link>
-                  </label>
-               </div>
-               
-               <button 
-                  type="submit" 
-                  disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 font-semibold text-white transition-transform hover:scale-[1.01] hover:bg-primary/90 active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
-               >
-                  {loading ? 'Creating Account...' : 'Create Account'}
-                  {!loading && (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                  )}
-               </button>
-            </form>
+            <SignupForm />
             
             <div className="my-8 flex items-center gap-4">
                <div className="h-px flex-1 bg-gray-200"></div>
