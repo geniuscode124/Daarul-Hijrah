@@ -58,15 +58,21 @@ export default function SignupPage() {
         </div>
         
         {/* Footer */}
-        <div className="mt-12 text-xs text-white/40">
+        <div className="mt-12 text-xs text-white/40 hidden lg:block">
            &copy; {new Date().getFullYear()} Daarul-Hijrah Platform. All rights reserved.
         </div>
       </div>
 
-      {/* Right Panel - Form */}
       <div className="flex w-full flex-col justify-center bg-white p-8 lg:w-[55%] lg:p-12 xl:p-24">
          <div className="mx-auto w-full max-w-lg">
             <SignupForm />
+            
+            {/* Mobile Footer */}
+            <div className="mt-12 text-center lg:hidden">
+               <p className="text-xs text-gray-400">
+                  &copy; {new Date().getFullYear()} Daarul-Hijrah Platform. All rights reserved.
+               </p>
+            </div>
          </div>
       </div>
     </div>
