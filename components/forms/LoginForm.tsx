@@ -32,7 +32,6 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -41,15 +40,6 @@ export function LoginForm() {
       password: "",
     },
   });
-
-  const calculateStrength = (pass: string) => {
-    let score = 0;
-    if (pass.length >= 8) score++;
-    if (/[A-Z]/.test(pass)) score++;
-    if (/[0-9]/.test(pass)) score++;
-    if (/[^A-Za-z0-9]/.test(pass)) score++;
-    setPasswordStrength(score);
-  };
 
   async function onSubmit(values: LoginFormValues) {
     setLoading(true);
@@ -126,65 +116,28 @@ export function LoginForm() {
                 </Link>
               </div>
               <FormControl>
-                <div className="space-y-3">
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      className="h-11 pl-10 bg-muted/30 pr-10"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        calculateStrength(e.target.value);
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  </div>
-
-                  {field.value.length > 0 && (
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-4 gap-2">
-                        {[1, 2, 3, 4].map((index) => {
-                          const getStrengthColor = (score: number) => {
-                            if (score === 1) return "bg-red-500";
-                            if (score === 2) return "bg-orange-500";
-                            if (score === 3) return "bg-amber-500";
-                            if (score === 4) return "bg-emerald-500";
-                            return "bg-muted";
-                          };
-
-                          return (
-                            <div
-                              key={index}
-                              className={cn(
-                                "h-1.5 rounded-full transition-colors",
-                                index <= passwordStrength 
-                                  ? getStrengthColor(passwordStrength) 
-                                  : "bg-muted"
-                              )}
-                            />
-                          );
-                        })}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Must contain at least 8 characters, one symbol, one number, and one capital letter.
-                      </p>
-                    </div>
-                  )}
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="h-11 pl-10 bg-muted/30 pr-10"
+                    {...field}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
                 </div>
               </FormControl>
               <FormMessage />
