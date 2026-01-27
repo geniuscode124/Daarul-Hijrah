@@ -1,56 +1,67 @@
-import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import { prisma } from '@/lib/prisma';
+import { setSessionCookie, getSessionCookie, deleteSessionCookie } from './cookies';
 
-const secretKey = process.env.SESSION_SECRET || 'default-secret-key-change-in-prod';
-const key = new TextEncoder().encode(secretKey);
+import { cache } from 'react';
 
-export type SessionPayload = {
-  userId: string;
-  role: string;
-  expiresAt: Date;
-};
+// Using Lucia's utility or standard crypto for ID generation if Lucia isn't installed. 
+// Since Lucia isn't explicitly mentioned as installed, I'll use crypto.randomUUID or a simple random string.
+// However, the user said "No third-party auth services (no Clerk, no Auth0, no Firebase)."
+// But using a library like 'oslo' or 'lucia' for utilities might be fine. 
+// To keep it dependency-minimal as requested ("No third-party auth services"), I'll use crypto.
+import { randomBytes } from 'crypto';
 
-export async function encrypt(payload: SessionPayload) {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('7d') // Session lasts 7 days
-    .sign(key);
+function generateSessionId(): string {
+  return randomBytes(32).toString('hex');
 }
 
-export async function decrypt(session: string | undefined = '') {
-  try {
-    const { payload } = await jwtVerify(session, key, {
-      algorithms: ['HS256'],
-    });
-    return payload as unknown as SessionPayload;
-  } catch (error) {
+export async function createSession(userId: string) {
+  const sessionId = generateSessionId();
+  const session = await prisma.session.create({
+    data: {
+      id: sessionId,
+      userId,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
+    },
+  });
+  
+  await setSessionCookie(session.id, session.expiresAt);
+  return session;
+}
+
+export const getSession = cache(async () => {
+  const sessionId = await getSessionCookie();
+  if (!sessionId) return null;
+
+  const session = await prisma.session.findUnique({
+    where: { id: sessionId },
+    include: { user: true },
+  });
+
+  if (!session) {
     return null;
   }
-}
 
-export async function createSession(userId: string, role: string) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-  const session = await encrypt({ userId, role, expiresAt });
-  
-  const cookieStore = await cookies();
-  cookieStore.set('session', session, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    expires: expiresAt,
-    sameSite: 'lax',
-    path: '/',
-  });
-}
+  // Check expiration
+  if (Date.now() >= session.expiresAt.getTime()) {
+    await prisma.session.delete({ where: { id: sessionId } });
+    await deleteSessionCookie();
+    return null;
+  }
 
-export async function getSession() {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('session')?.value;
-  if (!session) return null;
-  return await decrypt(session);
-}
+  // Optional: Extend session if close to expiry (sliding window) - keeping it simple for now as requested.
+
+  return session.user;
+});
 
 export async function deleteSession() {
-  const cookieStore = await cookies();
-  cookieStore.delete('session');
+  const sessionId = await getSessionCookie();
+  if (sessionId) {
+    try {
+      await prisma.session.delete({ where: { id: sessionId } });
+    } catch (error) {
+      // Ignore if already deleted
+    }
+  }
+  await deleteSessionCookie();
 }
+

@@ -53,12 +53,12 @@ export async function POST(req: NextRequest) {
         lastName,
         email,
         passwordHash,
-        role: 'student', 
+        role: 'STUDENT', 
       },
     });
 
     // Create session (login immediately after signup)
-    await createSession(newUser.id, newUser.role);
+    await createSession(newUser.id);
 
     return NextResponse.json(
       { message: 'Account created successfully', user: { id: newUser.id, email: newUser.email, role: newUser.role } },
