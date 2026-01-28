@@ -1,39 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { decrypt } from '@/lib/auth/session';
 
 // Define protected route patterns
 const protectedRoutes = ['/student', '/teacher', '/admin'];
-const publicRoutes = ['/login', '/signup', '/', '/about', '/contact'];
 
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.some((route) => path.startsWith(route));
   
-  // Decrypt session from cookie
-  const cookie = req.cookies.get('session')?.value;
-  const session = await decrypt(cookie);
+  // Check for session_id cookie
+  const sessionId = req.cookies.get('session_id')?.value;
 
   // 1. Redirect unauthenticated users trying to access protected routes
-  if (isProtectedRoute && !session?.userId) {
+  if (isProtectedRoute && !sessionId) {
     return NextResponse.redirect(new URL('/login', req.nextUrl));
   }
 
-  // 2. Redirect authenticated users away from Auth pages (login/signup)
-  if (path === '/login' || path === '/signup') {
-    if (session?.userId) {
-        // Redirect to their dashboard based on role
-        return NextResponse.redirect(new URL(`/${session.role}/dashboard`, req.nextUrl));
-    }
+  // 2. Redirect authenticated users away from Auth pages (login/signup) if session exists
+  // Note: We cannot check role here without database access in Edge Runtime.
+  // Ideally, redirect to a loading page or root where Server Component handles routing.
+  if ((path === '/login' || path === '/signup') && sessionId) {
+      // For now, redirect to home or a generic dashboard gateway
+      return NextResponse.redirect(new URL('/', req.nextUrl));
   }
 
-  // 3. Role-Based Access Control
-  if (path.startsWith('/admin') && session?.role !== 'admin') {
-     return NextResponse.redirect(new URL('/unauthorized', req.nextUrl));
-  }
-  
-  if (path.startsWith('/teacher') && session?.role !== 'teacher') {
-     return NextResponse.redirect(new URL('/unauthorized', req.nextUrl));
-  }
+  // Note: Strict RBAC (Role-Based Access Control) must now happen in Server Components (Layout/Page)
+  // because we cannot access the database to verify the session & role in Edge Middleware.
 
   return NextResponse.next();
 }
