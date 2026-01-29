@@ -58,7 +58,7 @@ export async function deleteSession() {
   if (sessionId) {
     try {
       await prisma.session.delete({ where: { id: sessionId } });
-    } catch (error) {
+    } catch {
       // Ignore if already deleted
     }
   }
