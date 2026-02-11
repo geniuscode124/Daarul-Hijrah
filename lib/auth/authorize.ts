@@ -22,7 +22,10 @@ export async function requireRole(allowedRoles: Role[]): Promise<AuthResult> {
     };
   }
 
-  if (!allowedRoles.includes(user.role)) {
+  // Check if user has any of the required roles
+  const hasRole = user.roles.some((userRole: string) => allowedRoles.includes(userRole as Role));
+
+  if (!hasRole) {
     return {
       user: null,
       error: NextResponse.json({ message: 'Forbidden: Insufficient permissions' }, { status: 403 }),

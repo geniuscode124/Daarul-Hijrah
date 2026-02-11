@@ -34,7 +34,17 @@ export const getSession = cache(async () => {
 
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
-    include: { user: true },
+    include: { 
+      user: {
+        include: {
+          userRoles: {
+            include: {
+              role: true
+            }
+          }
+        }
+      } 
+    },
   });
 
   if (!session) {
@@ -48,9 +58,14 @@ export const getSession = cache(async () => {
     return null;
   }
 
-  // Optional: Extend session if close to expiry (sliding window) - keeping it simple for now as requested.
+  // Map database roles to flat array of role names
+  const roles = session.user.userRoles.map(ur => ur.role.name);
 
-  return session.user;
+  return {
+    ...session.user,
+    roles, // Explicitly return roles array
+    role: roles.length > 0 ? roles[0] : null, // Backward compatibility: primary role
+  };
 });
 
 export async function deleteSession() {

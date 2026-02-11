@@ -1,1 +1,5 @@
-export { Role } from '../../prisma/generated/prisma/enums';
+export enum Role {
+  STUDENT = 'STUDENT',
+  TEACHER = 'TEACHER',
+  ADMIN = 'ADMIN',
+}
