@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     
     // Simulate DB operation
-    console.log(`[ADMIN ${user.email}] Creating teacher:`, body);
+    console.log(`[ADMIN user.id=${user.id}] Creating teacher request`);
 
     return NextResponse.json(
       { message: 'Teacher created successfully', createdBy: user.id },

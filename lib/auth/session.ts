@@ -53,7 +53,11 @@ export const getSession = cache(async () => {
 
   // Check expiration
   if (Date.now() >= session.expiresAt.getTime()) {
-    await prisma.session.delete({ where: { id: sessionId } });
+    try {
+      await prisma.session.delete({ where: { id: sessionId } });
+    } catch {
+
+    }
     await deleteSessionCookie();
     return null;
   }

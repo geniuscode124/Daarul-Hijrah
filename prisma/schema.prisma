@@ -22,11 +22,11 @@ model User {
   updatedAt    DateTime @updatedAt
 
   // Relations
-  sessions     Session[]
-  userRoles    UserRole[] // Explicit many-to-many via join table
-  lectures     Lecture[]  @relation("LectureAuthor")
-  questions    Question[]
-  answers      Answer[]
+  sessions  Session[]
+  userRoles UserRole[] // Explicit many-to-many via join table
+  lectures  Lecture[]  @relation("LectureAuthor")
+  questions Question[]
+  answers   Answer[]
 }
 
 model Session {
@@ -48,13 +48,13 @@ model Role {
 
 // Explicit join table for User <-> Role (Many-to-Many)
 model UserRole {
-  userId    String
-  roleId    String
+  userId     String
+  roleId     String
   assignedAt DateTime @default(now())
-  assignedBy String?  // ID of admin who assigned the role (audit trail)
+  assignedBy String? // ID of admin who assigned the role (audit trail)
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([userId, roleId])
 }
@@ -68,37 +68,37 @@ model Lecture {
   title       String
   description String?
   published   Boolean  @default(false)
-  authorId    String
+  authorId    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   // Relations
-  author      User        @relation("LectureAuthor", fields: [authorId], references: [id])
+  author      User?        @relation("LectureAuthor", fields: [authorId], references: [id], onDelete: SetNull)
   audioAssets AudioAsset[]
 }
 
 model AudioAsset {
-  id          String   @id @default(uuid())
-  lectureId   String
-  title       String?  // Optional specific title for this track
-  
+  id        String  @id @default(uuid())
+  lectureId String
+  title     String? // Optional specific title for this track
+
   // Storage reference (e.g. S3 object key or full URL)
-  storageKey  String
-  
+  storageKey String
+
   // Metadata for playback
-  duration    Int      // Duration in seconds
-  mimeType    String   // e.g. "audio/mpeg"
-  sizeBytes   Int
-  
+  duration  Int // Duration in seconds
+  mimeType  String // e.g. "audio/mpeg"
+  sizeBytes Int
+
   // Offline/Playback metadata (JSON)
   // Contains segments, timestamps, repetition markers, etc.
   // Using JSONB for flexibility as segmentation logic evolves.
-  metadata    Json?    
+  metadata Json?
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   // Relations
-  lecture     Lecture  @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+  lecture Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
 }
 
 // -----------------------------------------------------------------------------
@@ -106,19 +106,19 @@ model AudioAsset {
 // -----------------------------------------------------------------------------
 
 model Musaabaqah {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
-  
-  startDate   DateTime
-  endDate     DateTime
-  
+
+  startDate DateTime
+  endDate   DateTime
+
   // Linkage to recommended texts or memorisation targets can be added here
   // For now, simple metadata support
-  rules       Json?    // Specific rules for this competition
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  rules Json? // Specific rules for this competition
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // -----------------------------------------------------------------------------
@@ -126,28 +126,28 @@ model Musaabaqah {
 // -----------------------------------------------------------------------------
 
 model Question {
-  id          String   @id @default(uuid())
-  content     String
-  authorId    String
-  isResolved  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  content    String
+  authorId   String?
+  isResolved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // Relations
-  author      User     @relation(fields: [authorId], references: [id])
-  answers     Answer[]
+  author  User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  answers Answer[]
 }
 
 model Answer {
-  id          String   @id @default(uuid())
-  content     String
-  questionId  String
-  authorId    String
-  isAccepted  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  content    String
+  questionId String
+  authorId   String?
+  isAccepted Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // Relations
-  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  author      User     @relation(fields: [authorId], references: [id])
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  author   User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
 }

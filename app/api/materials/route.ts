@@ -13,7 +13,16 @@ export async function POST(req: NextRequest) {
   // 2. Business Logic
   try {
     const body = await req.json();
-    console.log(`[${user.role} ${user.email}] Uploading material:`, body);
+    
+    // Extract sanitized metadata for logging (avoiding PII and raw body)
+    const { filename, size, contentType } = body || {};
+    const logMetadata = {
+      filename: typeof filename === 'string' ? filename : undefined,
+      size: typeof size === 'number' ? size : undefined,
+      contentType: typeof contentType === 'string' ? contentType : undefined,
+    };
+
+    console.log(`[${user.role} ${user.id}] Uploading material:`, logMetadata);
 
     return NextResponse.json(
       { message: 'Material uploaded successfully', uploadedBy: user.id, role: user.role },
