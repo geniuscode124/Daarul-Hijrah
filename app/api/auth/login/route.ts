@@ -19,9 +19,14 @@ export async function POST(req: NextRequest) {
 
     const { email, password } = result.data;
 
-    // Find user
+    // Find user with roles
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        userRoles: {
+          include: { role: true }
+        }
+      }
     });
 
     if (!user) {
@@ -45,8 +50,12 @@ export async function POST(req: NextRequest) {
     // Create session
     await createSession(user.id);
 
+    // Get primary role
+    const roles = user.userRoles.map(ur => ur.role.name);
+    const primaryRole = roles.length > 0 ? roles[0] : null;
+
     return NextResponse.json(
-      { message: 'Login successful', user: { id: user.id, email: user.email, role: user.role } },
+      { message: 'Login successful', user: { id: user.id, email: user.email, role: primaryRole } },
       { status: 200 }
     );
 

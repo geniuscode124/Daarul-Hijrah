@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { verifyToken } from '@/lib/auth/token';
+
 // Define protected route patterns
 const protectedRoutes = ['/student', '/teacher', '/admin'];
 
@@ -8,17 +10,21 @@ export default async function proxy(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) => path.startsWith(route));
   
   // Check for session_id cookie
-  const sessionId = req.cookies.get('session_id')?.value;
+  const sessionToken = req.cookies.get('session_id')?.value;
+  
+  // Verify the session token (stateless signature check)
+  // If invalid or missing, verifiedId will be null
+  const verifiedId = sessionToken ? await verifyToken(sessionToken) : null;
 
   // 1. Redirect unauthenticated users trying to access protected routes
-  if (isProtectedRoute && !sessionId) {
+  if (isProtectedRoute && !verifiedId) {
     return NextResponse.redirect(new URL('/login', req.nextUrl));
   }
 
   // 2. Redirect authenticated users away from Auth pages (login/signup) if session exists
   // Note: We cannot check role here without database access in Edge Runtime.
   // Ideally, redirect to a loading page or root where Server Component handles routing.
-  if ((path === '/login' || path === '/signup') && sessionId) {
+  if ((path === '/login' || path === '/signup') && verifiedId) {
       // For now, redirect to home or a generic dashboard gateway
       return NextResponse.redirect(new URL('/', req.nextUrl));
   }
