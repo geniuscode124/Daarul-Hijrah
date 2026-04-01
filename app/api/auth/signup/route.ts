@@ -51,7 +51,9 @@ export async function POST(req: NextRequest) {
       data: {
         firstName,
         lastName,
+        name: `${firstName} ${lastName}`,
         email,
+        emailVerified: false,
         passwordHash,
         role: 'STUDENT', 
       },

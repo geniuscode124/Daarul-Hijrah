@@ -21,6 +21,9 @@ export async function createSession(userId: string) {
       id: sessionId,
       userId,
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
+      token: sessionId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   });
   
