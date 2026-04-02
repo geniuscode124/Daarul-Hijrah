@@ -32,6 +32,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!user.passwordHash) {
+      return NextResponse.json({ error: "Password not set" }, { status: 400 });
+    }
+    
     // Verify password
     const isValid = await verifyPassword(password, user.passwordHash);
 
