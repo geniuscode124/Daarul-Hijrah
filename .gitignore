@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/verify_db.js
+/test_auth.js
+/pg_test.js
 
 # next.js
 /.next/

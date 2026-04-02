@@ -24,7 +24,7 @@ export const auth = betterAuth({
       lastName: { type: "string" },
       passwordHash: { type: "string" },
       role: { type: "string", defaultValue: "STUDENT" },
-      status: { type: "string", defaultValue: "active" },
+      status: { type: "string", defaultValue: "ACTIVE" },
     }
   }
 });

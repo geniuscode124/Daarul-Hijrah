@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   // 2. Business Logic
   try {
     const body = await req.json();
-    console.log(`[${user.role} ${user.email}] Uploading material:`, body);
+    // console.log(`[${user.role} ${user.email}] Uploading material:`, body);
+    console.log(`[${user.role} userId:${user.id}] Uploading material for:`, body?.title ?? 'unknown');
 
     return NextResponse.json(
       { message: 'Material uploaded successfully', uploadedBy: user.id, role: user.role },
