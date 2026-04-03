@@ -12,9 +12,6 @@
 
 # testing
 /coverage
-/verify_db.js
-/test_auth.js
-/pg_test.js
 
 # next.js
 /.next/
@@ -45,3 +42,8 @@ next-env.d.ts
 
 # prisma
 /prisma/generated
+
+# testing
+verify_db.js
+test_auth.js
+pg_test.js

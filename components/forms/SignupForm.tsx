@@ -98,6 +98,46 @@ export function SignupForm() {
     }
   }
 
+  async function onSubmitBetter(values: SignupFormValues) {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/auth/sign-up/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Origin": "http://localhost:3000" },
+        body: JSON.stringify({
+           firstName: values.firstName,
+           lastName: values.lastName,
+           name: `${values.firstName} ${values.lastName}`,
+           email: values.email,
+           password: values.password
+        }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Signup failed", res.status, text);
+        throw new Error(text || "Something went wrong");
+      }
+
+      const data = await res.json();
+      console.log("Signup success", data?.user?.email);
+
+      // Extract cookies
+      const cookies = res.headers.getSetCookie?.().join("; ") || res.headers.get("set-cookie") || "";
+      
+      console.log("Cookies received:", cookies ? "YES" : "NO"); 
+
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="w-full max-w-lg space-y-8">
       <div className="flex justify-end text-sm">
@@ -122,7 +162,7 @@ export function SignupForm() {
       </Badge>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
+        <form onSubmit={form.handleSubmit(onSubmitBetter)} className="space-y-6 pt-4">
         {error && (
           <div className="rounded-md bg-destructive/15 p-4 text-sm text-destructive">
             {error}

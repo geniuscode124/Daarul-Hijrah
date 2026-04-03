@@ -59,7 +59,7 @@ export default function SignupPage() {
         
         {/* Footer */}
         <div className="mt-12 text-xs text-white/40 hidden lg:block">
-           &copy; {new Date().getFullYear()} Daarul-Hijrah Platform. All rights reserved.
+           &copy; {new Date().getFullYear()} Daarul-Hijrah. All rights reserved.
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default function SignupPage() {
             {/* Mobile Footer */}
             <div className="mt-12 text-center lg:hidden">
                <p className="text-xs text-gray-400">
-                  &copy; {new Date().getFullYear()} Daarul-Hijrah Platform. All rights reserved.
+                  &copy; {new Date().getFullYear()} Daarul-Hijrah. All rights reserved.
                </p>
             </div>
          </div>

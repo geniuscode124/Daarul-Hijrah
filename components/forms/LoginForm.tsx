@@ -68,9 +68,43 @@ export function LoginForm() {
     }
   }
 
+  async function onSubmitBetter(values: LoginFormValues) {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/auth/sign-in/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Origin": "http://localhost:3000" },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Login failed", res.status, text);
+        throw new Error(text || "Invalid credentials");
+      }
+
+      const data = await res.json();
+      console.log("Login success", data?.user?.email);
+
+      // Extract cookies
+      const cookies = res.headers.getSetCookie?.().join("; ") || res.headers.get("set-cookie") || "";
+      
+      console.log("Cookies received:", cookies ? "YES" : "NO");
+
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmitBetter)} className="space-y-5">
         {error && (
           <div className="rounded-md bg-destructive/15 p-4 text-sm text-destructive">
             {error}
