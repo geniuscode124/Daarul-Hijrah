@@ -72,24 +72,29 @@ export function SignupForm() {
     setLoading(true);
     setError(null);
 
-    const { data, error: authError } = await authClient.signUp.email({
-      email: values.email,
-      password: values.password,
-      name: `${values.firstName} ${values.lastName}`,
-      ...({
-        firstName: values.firstName,
-        lastName: values.lastName,
-      } as any)
-    });
+    try {
+      const { data, error: authError } = await authClient.signUp.email({
+        email: values.email,
+        password: values.password,
+        name: `${values.firstName} ${values.lastName}`,
+        ...({
+          firstName: values.firstName,
+          lastName: values.lastName,
+        } as any)
+      });
 
-    if (authError) {
-      setError(authError.message || "Something went wrong during signup");
+      if (authError) {
+        setError(authError.message || "Something went wrong during signup");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred. Please try again.");
       setLoading(false);
-      return;
     }
-
-    router.push("/");
-    router.refresh();
   }
 
   return (

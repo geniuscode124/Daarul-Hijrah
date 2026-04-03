@@ -24,16 +24,12 @@ export async function POST(req: NextRequest) {
       where: { email },
     });
 
-    if (!user) {
+    if (!user || !user.passwordHash) {
       // Return generic error for security
       return NextResponse.json(
         { message: 'Invalid email or password' },
         { status: 401 }
       );
-    }
-
-    if (!user.passwordHash) {
-      return NextResponse.json({ error: "Password not set" }, { status: 400 });
     }
     
     // Verify password

@@ -43,19 +43,24 @@ export function LoginForm() {
     setLoading(true);
     setError(null);
 
-    const { data, error: authError } = await authClient.signIn.email({
-      email: values.email,
-      password: values.password,
-    });
+    try {
+      const { data, error: authError } = await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+      });
 
-    if (authError) {
-      setError(authError.message || "Invalid credentials");
+      if (authError) {
+        setError(authError.message || "Invalid credentials");
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (e: any) {
+      setError(e.message || "An unexpected error occurred. Please try again.");
+    } finally {
       setLoading(false);
-      return;
-    }
-
-    router.push("/");
-    router.refresh();
+    } 
   }
 
   return (
