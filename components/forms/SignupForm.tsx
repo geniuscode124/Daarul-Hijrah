@@ -22,6 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 const signupSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -71,71 +72,24 @@ export function SignupForm() {
     setLoading(true);
     setError(null);
 
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-           firstName: values.firstName,
-           lastName: values.lastName,
-           email: values.email,
-           password: values.password
-        }),
-      });
+    const { data, error: authError } = await authClient.signUp.email({
+      email: values.email,
+      password: values.password,
+      name: `${values.firstName} ${values.lastName}`,
+      ...({
+        firstName: values.firstName,
+        lastName: values.lastName,
+      } as any)
+    });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
-
-      router.push("/");
-      router.refresh();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
+    if (authError) {
+      setError(authError.message || "Something went wrong during signup");
       setLoading(false);
+      return;
     }
-  }
 
-  async function onSubmitBetter(values: SignupFormValues) {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/auth/sign-up/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Origin": "http://localhost:3000" },
-        body: JSON.stringify({
-           firstName: values.firstName,
-           lastName: values.lastName,
-           name: `${values.firstName} ${values.lastName}`,
-           email: values.email,
-           password: values.password
-        }),
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("Signup failed", res.status, text);
-        throw new Error(text || "Something went wrong");
-      }
-
-      const data = await res.json();
-      console.log("Signup success", data?.user?.email);
-
-      // Extract cookies
-      const cookies = res.headers.getSetCookie?.().join("; ") || res.headers.get("set-cookie") || "";
-      
-      console.log("Cookies received:", cookies ? "YES" : "NO"); 
-
-      router.push("/");
-      router.refresh();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    router.push("/");
+    router.refresh();
   }
 
   return (
@@ -162,7 +116,7 @@ export function SignupForm() {
       </Badge>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmitBetter)} className="space-y-6 pt-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
         {error && (
           <div className="rounded-md bg-destructive/15 p-4 text-sm text-destructive">
             {error}
