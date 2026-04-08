@@ -17,7 +17,7 @@ export default async function proxy(req: NextRequest) {
 
   // 1. Redirect unauthenticated users trying to access protected routes
   if (isProtectedRoute && !sessionId) {
-    console.log(`[Middleware Proxy] Redirecting to /login (Unauthenticated string to access protected)`);
+    console.log(`[Middleware Proxy] Redirecting to /login (Unauthenticated trying to access protected)`);
     return NextResponse.redirect(new URL('/login', req.nextUrl));
   }
 
