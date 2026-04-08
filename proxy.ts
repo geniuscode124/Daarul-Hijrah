@@ -7,19 +7,23 @@ export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.some((route) => path.startsWith(route));
   
-  // Check for session_id cookie
-  const sessionId = req.cookies.get('session_id')?.value;
+  // Check for session_id cookie OR better-auth session token
+  const legacySessionId = req.cookies.get('session_id')?.value;
+  const betterAuthSessionId = req.cookies.get('better-auth.session_token')?.value;
+  const sessionId = betterAuthSessionId || legacySessionId;
+
+  // Debug logging
+  console.log(`[Middleware Proxy] Path: ${path} | Authenticated: ${!!sessionId}`);
 
   // 1. Redirect unauthenticated users trying to access protected routes
   if (isProtectedRoute && !sessionId) {
+    console.log(`[Middleware Proxy] Redirecting to /login (Unauthenticated string to access protected)`);
     return NextResponse.redirect(new URL('/login', req.nextUrl));
   }
 
   // 2. Redirect authenticated users away from Auth pages (login/signup) if session exists
-  // Note: We cannot check role here without database access in Edge Runtime.
-  // Ideally, redirect to a loading page or root where Server Component handles routing.
   if ((path === '/login' || path === '/signup') && sessionId) {
-      // For now, redirect to home or a generic dashboard gateway
+      console.log(`[Middleware Proxy] Redirecting to / (Authenticated user trying to access Auth page)`);
       return NextResponse.redirect(new URL('/', req.nextUrl));
   }
 
