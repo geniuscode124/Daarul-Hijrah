@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff, Loader2, User, Mail, Lock, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -89,6 +90,7 @@ export function SignupForm() {
         return;
       }
 
+      toast.success("Account created successfully!");
       router.push("/");
       router.refresh();
     } catch (err: any) {

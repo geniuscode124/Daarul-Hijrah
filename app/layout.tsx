@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Your gateway to authentic Islamic knowledge. Accessible, comprehensive, and designed for the modern learner.",
 };
 
+import { Toaster } from "@/components/ui/sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,6 +30,7 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} antialiased font-sans`}
       >
         {children}
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );

@@ -9,6 +9,7 @@ import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -54,6 +55,7 @@ export function LoginForm() {
         return;
       }
 
+      toast.success("Logged in successfully!");
       router.push("/");
       router.refresh();
     } catch (e: any) {

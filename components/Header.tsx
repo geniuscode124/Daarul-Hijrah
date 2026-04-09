@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Menu, Loader2, LogOut, X } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function Header({ initialSession }: { initialSession?: any }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,6 +19,7 @@ export function Header({ initialSession }: { initialSession?: any }) {
   const handleSignOut = async () => {
     try {
       await authClient.signOut();
+      toast.success("Logged out successfully");
       router.push("/");
       router.refresh();
     } catch (err) {
