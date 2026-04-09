@@ -7,17 +7,24 @@ import { Menu, Loader2, LogOut, X } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-export function Header() {
+export function Header({ initialSession }: { initialSession?: any }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { data: session, isPending } = authClient.useSession();
-  console.log(session);
+  const { data: clientSession, isPending } = authClient.useSession();
+  
+  const activeSession = isPending ? initialSession : (clientSession ?? initialSession);
+  const showLoader = isPending && initialSession === undefined;
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await authClient.signOut();
-    router.push("/");
-    router.refresh();
+    try {
+      await authClient.signOut();
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      console.error("Sign out failed", err);
+    }
   };
+  
   return (
     <>
     <header className="sticky top-0 z-50 w-full border-b border-black/5 bg-background/80 backdrop-blur-md">
@@ -60,11 +67,11 @@ export function Header() {
 
         {/* Right Section - Auth Actions */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-4">
-          {isPending ? (
+          {showLoader ? (
             <div className="h-10 w-24 flex items-center justify-center">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
-          ) : session ? (
+          ) : activeSession ? (
             <div className="flex items-center gap-4">
               <Link
                 href="/dashboard"
@@ -113,7 +120,7 @@ export function Header() {
 
     {/* Mobile Menu Overlay */}
     {mobileMenuOpen && (
-      <div className="fixed inset-0 z-100 lg:hidden">
+      <div className="fixed inset-0 z-[100] lg:hidden">
         {/* Backdrop */}
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
         
@@ -146,11 +153,11 @@ export function Header() {
               </div>
               
               <div className="py-6">
-                {isPending ? (
+                {showLoader ? (
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                   </div>
-                ) : session ? (
+                ) : activeSession ? (
                   <div className="space-y-3">
                     <Link
                       href="/dashboard"

@@ -26,5 +26,11 @@ export const auth = betterAuth({
       role: { type: "string", defaultValue: "STUDENT" },
       status: { type: "string", defaultValue: "ACTIVE" },
     }
-  }
+  },
+  trustedOrigins(request) {
+    return [
+      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+      "http://192.168.1.*:3000"
+    ];
+  },
 });
