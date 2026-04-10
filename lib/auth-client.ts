@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 const getBaseURL = () => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
     return window.location.origin;
   }
 
@@ -20,5 +20,5 @@ const getBaseURL = () => {
 };
 
 export const authClient = createAuthClient({
-  baseURL: getBaseURL(), // Dynamically resolve base URL to support both Server and Client via local IP addresses.
+  baseURL: getBaseURL(), // Dynamically resolve base URL for both server-side and client-side contexts.
 });
