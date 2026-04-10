@@ -24,6 +24,7 @@ export function Header({ initialSession }: { initialSession?: any }) {
       router.refresh();
     } catch (err) {
       console.error("Sign out failed", err);
+      toast.error("Sign out failed. Please try again.");
     }
   };
   
@@ -83,7 +84,7 @@ export function Header({ initialSession }: { initialSession?: any }) {
               </Link>
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-muted-foreground transition-all hover:bg-muted"
+                className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-muted-foreground transition-all hover:bg-muted cursor-pointer"
               >
                 <LogOut className="h-4 w-4" />
                 Sign Out

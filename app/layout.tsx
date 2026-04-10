@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,9 +17,6 @@ export const metadata: Metadata = {
   title: "Daarul-Hijrah | Learn Islam Anywhere, Anytime",
   description: "Your gateway to authentic Islamic knowledge. Accessible, comprehensive, and designed for the modern learner.",
 };
-
-import { Toaster } from "@/components/ui/sonner";
-
 export default function RootLayout({
   children,
 }: Readonly<{
