@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { Resend } from "resend";
+import { getBaseURL } from "./utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -81,8 +82,10 @@ export const auth = betterAuth({
   },
   trustedOrigins(request) {
     return [
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-      "http://192.168.1.*:3000"
+      "https://*.vercel.app",
+      "http://localhost:3000",
+      "http://192.168.1.*:3000",
     ];
   },
+  baseURL: getBaseURL(),
 });
