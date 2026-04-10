@@ -1,7 +1,9 @@
 import { createAuthClient } from "better-auth/react";
 
 const getBaseURL = () => {
-  if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+  // If we're on the client side, use the current origin
+  //   && process.env.NODE_ENV === "development"
+  if (typeof window !== "undefined") {
     return window.location.origin;
   }
 
