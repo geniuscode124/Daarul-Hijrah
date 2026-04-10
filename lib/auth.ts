@@ -62,9 +62,11 @@ export const auth = betterAuth({
             </html>
           `,
         });
-        console.log(`[Dev Logs] Reset password email actively sent to ${user.email} with URL: ${url}`);
+        // console.log(`[Dev Logs] Reset password email actively sent to ${user.email} with URL: ${url}`);
+        console.log(`[Auth] Reset password email sent to ${user.email}`);
       } catch (error) {
         console.error("Failed to send reset email:", error);
+        throw error;
       }
     },
   },
