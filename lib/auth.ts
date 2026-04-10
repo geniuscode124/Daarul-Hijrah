@@ -82,7 +82,7 @@ export const auth = betterAuth({
   },
   trustedOrigins(request) {
     return [
-      "https://*.vercel.app",
+      "https://daarul-hijrah*.vercel.app",
       "http://localhost:3000",
       "http://192.168.1.*:3000",
     ];
