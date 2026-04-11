@@ -7,10 +7,8 @@ export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.some((route) => path.startsWith(route));
   
-  // Check for session_id cookie OR better-auth session token
-  const legacySessionId = req.cookies.get('session_id')?.value;
-  const betterAuthSessionId = req.cookies.get('better-auth.session_token')?.value;
-  const sessionId = betterAuthSessionId || legacySessionId;
+  // Check for better-auth session token
+  const sessionId = req.cookies.get('better-auth.session_token')?.value;
 
   // Debug logging
   console.log(`[Middleware Proxy] Path: ${path} | Authenticated: ${!!sessionId}`);
