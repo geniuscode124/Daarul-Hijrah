@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { VerificationBanner } from "@/components/ui/VerificationBanner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} antialiased font-sans`}
       >
+        <VerificationBanner />
         {children}
         <Toaster position="bottom-right" richColors />
       </body>
