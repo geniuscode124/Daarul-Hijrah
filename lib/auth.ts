@@ -14,7 +14,7 @@ function validateGoogleOAuthConfig() {
 
   if (!clientId || !clientSecret) {
     throw new Error(
-      'Google OAuth configuration is incomplete. Please ensure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables are set and non-empty.'
+      'Google OAuth configuration is incomplete. Please ensure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables are set and non-empty.',
     );
   }
 }
@@ -163,7 +163,17 @@ export const auth = betterAuth({
       'http://192.168.1.*:3000',
     ];
   },
-  baseURL: getBaseURL(),
+  baseURL: (request: any) => {
+    // For request-based URL determination
+    if (request && request.headers) {
+      const host =
+        request.headers.get('x-forwarded-host') || request.headers.get('host');
+      if (host && !host.includes('localhost')) {
+        return `https://${host}`;
+      }
+    }
+    return getBaseURL();
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
