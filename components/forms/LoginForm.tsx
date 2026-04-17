@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { authClient } from '@/lib/auth-client';
+import { toast } from 'sonner';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -19,24 +19,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 
-import { LoginSchema } from "@/lib/auth/validations";
+import { LoginSchema } from '@/lib/auth/validations';
 
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
@@ -51,18 +53,34 @@ export function LoginForm() {
       });
 
       if (authError) {
-        setError(authError.message || "Invalid credentials");
+        setError(authError.message || 'Invalid credentials');
         return;
       }
 
-      toast.success("Logged in successfully!");
-      router.push("/");
+      toast.success('Logged in successfully!');
+      router.push('/');
       router.refresh();
     } catch (e: any) {
-      setError(e.message || "An unexpected error occurred. Please try again.");
+      setError(e.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
-    } 
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setGoogleLoading(true);
+    setError(null);
+
+    try {
+      // Initiate Google OAuth flow - this will redirect to Google's login
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/', // Redirect to home after successful authentication
+      });
+    } catch (e: any) {
+      setError(e.message || 'Failed to sign in with Google');
+      setGoogleLoading(false);
+    }
   }
 
   return (
@@ -79,14 +97,16 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground font-semibold">Email Address</FormLabel>
+              <FormLabel className="text-foreground font-semibold">
+                Email Address
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input 
-                    placeholder="name@example.com" 
-                    className="h-11 pl-10 bg-muted/30" 
-                    {...field} 
+                  <Input
+                    placeholder="name@example.com"
+                    className="h-11 pl-10 bg-muted/30"
+                    {...field}
                   />
                 </div>
               </FormControl>
@@ -101,7 +121,9 @@ export function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel className="text-foreground font-semibold">Password</FormLabel>
+                <FormLabel className="text-foreground font-semibold">
+                  Password
+                </FormLabel>
                 <Link
                   href="/forgot-password"
                   className="text-sm font-bold text-[#C5A059] hover:underline"
@@ -113,7 +135,7 @@ export function LoginForm() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     className="h-11 pl-10 bg-muted/30 pr-10"
                     {...field}
@@ -124,7 +146,9 @@ export function LoginForm() {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -139,7 +163,11 @@ export function LoginForm() {
           )}
         />
 
-        <Button type="submit" className="h-12 w-full bg-primary font-semibold hover:bg-primary/90" disabled={loading}>
+        <Button
+          type="submit"
+          className="h-12 w-full bg-primary font-semibold hover:bg-primary/90"
+          disabled={loading || googleLoading}
+        >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -152,6 +180,51 @@ export function LoginForm() {
             </>
           )}
         </Button>
+
+        <div className="relative py-4">
+          <div className="absolute inset-0 flex items-center">
+            <Separator />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="h-12 w-full bg-background cursor-pointer"
+          onClick={handleGoogleSignIn}
+          disabled={loading || googleLoading}
+        >
+          {googleLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Signing in...
+            </>
+          ) : (
+            <>
+              <img
+                src="https://www.google.com/favicon.ico"
+                alt="Google"
+                className="mr-2 h-4 w-4"
+              />
+              Google
+            </>
+          )}
+        </Button>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Don't have an account?{' '}
+          <Link
+            href="/signup"
+            className="font-semibold text-primary hover:underline"
+          >
+            Sign up
+          </Link>
+        </p>
       </form>
     </Form>
   );

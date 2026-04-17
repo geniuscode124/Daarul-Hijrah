@@ -21,10 +21,12 @@ export const auth = betterAuth({
         return bcrypt.compare(password, hash);
       },
     },
-    sendResetPassword: async ({ user, url, token }, request) => {
+  },
+  passwordReset: {
+    sendResetPassword: async ({ user, url, token }: any, request: any) => {
       try {
         await resend.emails.send({
-          from: 'Daarul-Hijrah <onboarding@resend.dev>', // Requires domain verification later
+          from: 'Daarul-Hijrah <onboarding@resend.dev>',
           to: user.email,
           subject: 'Reset your password for Daarul-Hijrah',
           html: `
@@ -63,8 +65,11 @@ export const auth = betterAuth({
             </html>
           `,
         });
-        // console.log(`[Dev Logs] Reset password email actively sent to ${user.email} with URL: ${url}`);
-        console.log(`[Auth] Reset password email sent to ${user.email}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[Auth] Reset password email sent to ${user.email}`);
+        } else {
+          console.log(`[Auth] Reset password email sent successfully`);
+        }
       } catch (error) {
         console.error('Failed to send reset email:', error);
         throw error;
@@ -73,7 +78,7 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
-    sendVerificationEmail: async ({ user, url, token }, request) => {
+    sendVerificationEmail: async ({ user, url, token }: any, request: any) => {
       try {
         await resend.emails.send({
           from: 'Daarul-Hijrah <onboarding@resend.dev>',
@@ -115,7 +120,12 @@ export const auth = betterAuth({
             </html>
           `,
         });
-        console.log(`[Auth] Verification email sent to ${user.email}`);
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[Auth] Verification email sent to ${user.email}`);
+        } else {
+          console.log(`[Auth] Verification email sent successfully`);
+        }
       } catch (error) {
         console.error('Failed to send verification email:', error);
         throw error;
@@ -131,7 +141,7 @@ export const auth = betterAuth({
       status: { type: 'string', defaultValue: 'ACTIVE' },
     },
   },
-  trustedOrigins(request) {
+  trustedOrigins: (request: any) => {
     return [
       'https://daarul-hijrah*.vercel.app',
       'http://localhost:3000',
@@ -139,4 +149,10 @@ export const auth = betterAuth({
     ];
   },
   baseURL: getBaseURL(),
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    },
+  },
 });

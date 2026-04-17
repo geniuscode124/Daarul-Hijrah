@@ -10,9 +10,12 @@ export async function GET() {
   }
 
   try {
-    const users = await prisma.user.findMany({ take: 1 });
-    return NextResponse.json({ success: true, users });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message, stack: error.stack }, { status: 500 });
+    const count = await prisma.user.count();
+    return NextResponse.json({ success: true, message: "Database connected", userCount: count });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Database test failed:", error);
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
+  }
   }
 }
