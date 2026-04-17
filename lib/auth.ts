@@ -7,6 +7,21 @@ import { getBaseURL } from './utils';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Validate required OAuth environment variables at startup
+function validateGoogleOAuthConfig() {
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+
+  if (!clientId || !clientSecret) {
+    throw new Error(
+      'Google OAuth configuration is incomplete. Please ensure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables are set and non-empty.'
+    );
+  }
+}
+
+// Validate OAuth config at module load time
+validateGoogleOAuthConfig();
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma as any, {
     provider: 'postgresql',
@@ -151,8 +166,8 @@ export const auth = betterAuth({
   baseURL: getBaseURL(),
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
 });
