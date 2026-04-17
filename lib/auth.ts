@@ -156,24 +156,12 @@ export const auth = betterAuth({
       status: { type: 'string', defaultValue: 'ACTIVE' },
     },
   },
-  trustedOrigins: (request: any) => {
-    return [
-      'https://daarul-hijrah*.vercel.app',
-      'http://localhost:3000',
-      'http://192.168.1.*:3000',
-    ];
-  },
-  baseURL: (request: any) => {
-    // For request-based URL determination
-    if (request && request.headers) {
-      const host =
-        request.headers.get('x-forwarded-host') || request.headers.get('host');
-      if (host && !host.includes('localhost')) {
-        return `https://${host}`;
-      }
-    }
-    return getBaseURL();
-  },
+  trustedOrigins: [
+    'https://daarul-hijrah*.vercel.app',
+    'http://localhost:3000',
+    'http://192.168.1.*:3000',
+  ],
+  baseURL: getBaseURL(),
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
