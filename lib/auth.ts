@@ -122,7 +122,7 @@ export const auth = betterAuth({
                 </div>
                 <div class="content">
                   <h2 style="margin-top: 0; color: #0F3D2E; font-size: 22px;">Verify Your Email</h2>
-                  <p>Welcome to Daarul-Hijrah! Please verify your email address by clicking the button below. This ensures your account remains secure.</p>
+                  <p>Welcome to Daarul-Hijrah! To securely sync your memorisation streaks and gain full access to our platform, we need to verify your email address.</p>
                   <a href="${url}" class="btn">Verify Email Address</a>
                   <p style="font-size: 14px; color: #6b7280; margin-top: 10px;">If you didn't create an account, you can safely ignore this email.</p>
                 </div>
