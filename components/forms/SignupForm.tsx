@@ -36,7 +36,6 @@ import { authClient } from '@/lib/auth-client';
 const signupSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.email('Please enter a valid email address'),
   password: z
     .string()
@@ -47,8 +46,8 @@ const signupSchema = z.object({
       /[^A-Za-z0-9]/,
       'Password must contain at least one special character',
     ),
-  terms: z.literal(true, {
-    error: () => ({ message: 'You must accept the terms and conditions' }),
+  terms: z.boolean().refine((value) => value === true, {
+    message: 'You must accept the terms and conditions',
   }),
 });
 
@@ -85,6 +84,8 @@ export function SignupForm() {
   async function onSubmit(values: SignupFormValues) {
     setLoading(true);
     setError(null);
+
+    console.log('Form submission started!!!');
 
     try {
       const { data, error: authError } = await authClient.signUp.email({
