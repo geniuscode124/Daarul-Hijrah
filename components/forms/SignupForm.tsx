@@ -85,8 +85,6 @@ export function SignupForm() {
     setLoading(true);
     setError(null);
 
-    console.log('Form submission started!!!');
-
     try {
       const { data, error: authError } = await authClient.signUp.email({
         email: values.email,
